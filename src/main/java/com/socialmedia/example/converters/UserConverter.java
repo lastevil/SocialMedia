@@ -14,8 +14,8 @@ public class UserConverter {
 
     public User fromRegDto(UserRegDto regDto){
         User user = new User();
-        user.setUsername(regDto.getUsername());
-        user.setEmail(regDto.getEmail());
+        user.setUsername(regDto.getUsername().toLowerCase());
+        user.setEmail(regDto.getEmail().toLowerCase());
         user.setPassword(passwordEncoder.encode(regDto.getPassword()));
         return user;
     }

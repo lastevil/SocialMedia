@@ -4,6 +4,7 @@ import com.socialmedia.example.converters.UserConverter;
 import com.socialmedia.example.dto.UserRegDto;
 import com.socialmedia.example.entities.Role;
 import com.socialmedia.example.entities.User;
+import com.socialmedia.example.exception.AppAuthenticationException;
 import com.socialmedia.example.exception.ResourceExistsException;
 import com.socialmedia.example.exception.validators.NewUserValidator;
 import com.socialmedia.example.repositorys.UserRepository;
@@ -31,9 +32,11 @@ public class UserService implements UserDetailsService {
         String[] masLogin = login.split("@");
         User user;
         if (masLogin.length == 2 && masLogin[1].contains(".")) {
-            user = userRepository.findByEmail(login);
+            user = userRepository.findByEmail(login.toLowerCase())
+                    .orElseThrow(() -> (new AppAuthenticationException("Incorrect email")));
         } else {
-            user = userRepository.findByUsername(login);
+            user = userRepository.findByUsername(login.toLowerCase())
+                    .orElseThrow(() -> (new AppAuthenticationException("Incorrect username")));
         }
         return new org.springframework.security.core.userdetails.User(user.getUsername(),
                 user.getPassword(),

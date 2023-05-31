@@ -6,32 +6,43 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.SocketException;
 import java.time.LocalDateTime;
 
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-    @ExceptionHandler
+    @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ApplicationError> catchValidationException(ValidationException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new ApplicationError(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(AppAuthenticationException.class)
+    public ResponseEntity<ApplicationError> catchAppAuthenticationException(AppAuthenticationException e) {
+        log.error(e.getMessage(), e);
+        return new ResponseEntity<>(new ApplicationError(HttpStatus.UNAUTHORIZED.value(), e.getMessage()), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(ResourceExistsException.class)
     public ResponseEntity<ApplicationError> catchResourceExistException(ResourceExistsException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new ApplicationError(HttpStatus.CONFLICT.value(), e.getMessage()), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(ResourceNotFoundException.class)
     private ResponseEntity<ApplicationError> catchResourceNotFoundException(ResourceNotFoundException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new ApplicationError(HttpStatus.NOT_FOUND.value(), e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler
-    public ResponseEntity<ApplicationError> handleAllOtherExceptions(RuntimeException e) {
-        log.error(e.toString(), e.getMessage());
-        return new ResponseEntity<>(new ApplicationError(HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now() + " Local server error"), HttpStatus.INTERNAL_SERVER_ERROR);
+    @ExceptionHandler({NullPointerException.class, IllegalArgumentException.class, IndexOutOfBoundsException.class,
+                        NumberFormatException.class, ArithmeticException.class, ArrayIndexOutOfBoundsException.class,
+                        IOException.class, FileNotFoundException.class, SocketException.class})
+    public ResponseEntity<ApplicationError> handleAllOtherExceptions(Exception e) {
+        log.error(e.getMessage(), e);
+        return new ResponseEntity<>(new ApplicationError(HttpStatus.FORBIDDEN.value(), LocalDateTime.now() + " " + e.getCause().getMessage()), HttpStatus.FORBIDDEN);
     }
 }
