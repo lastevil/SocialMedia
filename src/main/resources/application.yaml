@@ -1,0 +1,19 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /socialAPI
+spring:
+  application:
+    name: socialAPI
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: 1
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        ddl-auto: none
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
