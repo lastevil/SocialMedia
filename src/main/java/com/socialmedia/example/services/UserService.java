@@ -14,9 +14,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +28,7 @@ public class UserService implements UserDetailsService {
     private final RoleService roleService;
     private final UserConverter userConverter;
 
+    @Transactional
     public UserDetails loadUserByUsername(String login) {
         String[] masLogin = login.split("@");
         User user;
@@ -43,10 +44,11 @@ public class UserService implements UserDetailsService {
                 mapRolesToAuthorities(user.getRoles()));
     }
 
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
-        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
+    private List<? extends GrantedAuthority> mapRolesToAuthorities(List<Role> roles) {
+        return  roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
     }
 
+    @Transactional
     public void tryNewUserAdd(UserRegDto newUser) {
         NewUserValidator.validate(newUser);
         if (Boolean.TRUE.equals(userRepository.existsUserByUsername(newUser.getUsername())))
