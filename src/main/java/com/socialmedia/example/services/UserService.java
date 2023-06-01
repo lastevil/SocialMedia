@@ -6,7 +6,8 @@ import com.socialmedia.example.entities.Role;
 import com.socialmedia.example.entities.User;
 import com.socialmedia.example.exception.AppAuthenticationException;
 import com.socialmedia.example.exception.ResourceExistsException;
-import com.socialmedia.example.exception.validators.NewUserValidator;
+import com.socialmedia.example.exception.ResourceNotFoundException;
+import com.socialmedia.example.exception.validators.UserValidator;
 import com.socialmedia.example.repositorys.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,12 +28,12 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final UserConverter userConverter;
+    private final UserValidator validator;
 
     @Transactional
     public UserDetails loadUserByUsername(String login) {
-        String[] masLogin = login.split("@");
         User user;
-        if (masLogin.length == 2 && masLogin[1].contains(".")) {
+        if (validator.emailValidate(login)) {
             user = userRepository.findByEmail(login.toLowerCase())
                     .orElseThrow(() -> (new AppAuthenticationException("Incorrect email")));
         } else {
@@ -45,12 +46,12 @@ public class UserService implements UserDetailsService {
     }
 
     private List<? extends GrantedAuthority> mapRolesToAuthorities(List<Role> roles) {
-        return  roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
+        return roles.stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
     }
 
     @Transactional
     public void tryNewUserAdd(UserRegDto newUser) {
-        NewUserValidator.validate(newUser);
+        validator.validate(newUser);
         if (Boolean.TRUE.equals(userRepository.existsUserByUsername(newUser.getUsername())))
             throw new ResourceExistsException("This user already exists");
         User user = userConverter.fromRegDto(newUser);
@@ -59,5 +60,10 @@ public class UserService implements UserDetailsService {
         userRoles.add(roleUser);
         user.setRoles(userRoles);
         userRepository.save(user);
+    }
+
+    @Transactional
+    public User findUserByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> (new ResourceNotFoundException("User Not Found")));
     }
 }

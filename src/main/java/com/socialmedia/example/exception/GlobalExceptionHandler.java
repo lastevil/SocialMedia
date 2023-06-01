@@ -37,6 +37,11 @@ public class GlobalExceptionHandler {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new ApplicationError(HttpStatus.NOT_FOUND.value(), e.getMessage()), HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApplicationError> handleAccessDeniedException(Exception e){
+        log.error(e.getMessage(),e);
+        return new ResponseEntity<>(new ApplicationError(HttpStatus.FORBIDDEN.value(), e.getMessage()),HttpStatus.FORBIDDEN);
+    }
 
     @ExceptionHandler({NullPointerException.class, IllegalArgumentException.class, IndexOutOfBoundsException.class,
                         NumberFormatException.class, ArithmeticException.class, ArrayIndexOutOfBoundsException.class,

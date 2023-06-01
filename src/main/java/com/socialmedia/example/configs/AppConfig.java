@@ -21,8 +21,8 @@ public class AppConfig {
     @Bean
     MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
-        factory.setMaxFileSize(DataSize.ofMegabytes(1));
-        factory.setMaxRequestSize(DataSize.ofKilobytes(1024));
+        factory.setMaxFileSize(DataSize.ofMegabytes(3));
+        factory.setMaxRequestSize(DataSize.ofMegabytes(3));
         return factory.createMultipartConfig();
     }
 }
