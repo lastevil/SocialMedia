@@ -1,6 +1,6 @@
 package com.socialmedia.example.exception.validators;
 
-import com.socialmedia.example.dto.RequestPostDto;
+import com.socialmedia.example.dto.requests.RequestPostDto;
 import com.socialmedia.example.exception.ValidationException;
 
 import java.util.ArrayList;

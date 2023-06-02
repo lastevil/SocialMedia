@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS subscribers
     id          bigserial primary key,
     sender_id   uuid not null references users (id),
     receiver_id uuid not null references users (id),
-    is_friends  boolean
+    is_friends  boolean not null
 );
 
 CREATE TABLE IF NOT EXISTS messages
@@ -23,6 +23,5 @@ CREATE TABLE IF NOT EXISTS messages
     sender_id   uuid not null references users (id),
     receiver_id uuid not null references users (id),
     message     text,
-    is_read     boolean,
     created_at  timestamp default current_timestamp
 );

@@ -1,6 +1,6 @@
 package com.socialmedia.example.converters;
 
-import com.socialmedia.example.dto.ResponsePostDto;
+import com.socialmedia.example.dto.responses.ResponsePostDto;
 import com.socialmedia.example.entities.Post;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

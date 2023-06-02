@@ -1,14 +1,15 @@
 package com.socialmedia.example.services;
 
 import com.socialmedia.example.converters.PostMapper;
-import com.socialmedia.example.dto.RequestPostDto;
-import com.socialmedia.example.dto.ResponsePostDto;
+import com.socialmedia.example.dto.requests.RequestPostDto;
+import com.socialmedia.example.dto.responses.ResponsePostDto;
 import com.socialmedia.example.entities.Post;
 import com.socialmedia.example.entities.User;
 import com.socialmedia.example.exception.AccessDeniedException;
 import com.socialmedia.example.exception.ResourceNotFoundException;
 import com.socialmedia.example.exception.validators.PostValidator;
 import com.socialmedia.example.repositorys.PostRepository;
+import com.socialmedia.example.services.interfaces.PostServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -25,15 +26,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class PostsService {
+public class PostsService implements PostServiceImpl {
     private final UserService userService;
     private final PostRepository postRepository;
 
     @Transactional
+    @Override
     public UUID createPost(String username, RequestPostDto requestPostDto) {
         PostValidator.requestDtoValidate(requestPostDto);
         Post post = Post.builder()
@@ -45,18 +48,23 @@ public class PostsService {
         return post.getId();
     }
 
-    public List<Post> getPostsByUser(UUID userId) {
-        return postRepository.findAllByUserId(userId);
+    @Override
+    public List<ResponsePostDto> getPostsByUser(UUID userId) {
+        return postRepository.findAllByUserId(userId).stream()
+                .map(PostMapper.INSTANCE::fromEntityToResp)
+                .collect(Collectors.toList());
     }
 
+    @Override
     public ResponsePostDto getPostById(UUID postId) {
         return PostMapper.INSTANCE.fromEntityToResp(postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post not exist")));
     }
 
     @Transactional
+    @Override
     public void updatePost(String username, UUID postId, RequestPostDto requestPostDto) {
         User user = userService.findUserByUsername(username);
-        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+        Post post = findPostById(postId);
         if (!user.getId().equals(post.getUser().getId())) {
             throw new AccessDeniedException("Access Denied");
         }
@@ -70,9 +78,10 @@ public class PostsService {
     }
 
     @Transactional
+    @Override
     public void deletePost(String username, UUID postId) {
         User user = userService.findUserByUsername(username);
-        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+        Post post = findPostById(postId);
         if (!user.getId().equals(post.getUser().getId())) {
             throw new AccessDeniedException("Access Denied");
         }
@@ -108,6 +117,7 @@ public class PostsService {
     }
 
     @Transactional
+    @Override
     public void addOrUpdateFile(String username, UUID postId, MultipartFile file) {
         if (file != null) {
             User user = userService.findUserByUsername(username);
@@ -115,13 +125,16 @@ public class PostsService {
             if (!contentType.contains("image/")) {
                 throw new AccessDeniedException("Invalid file type");
             }
-            Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post not exist"));
+            Post post = findPostById(postId);
             if (!post.getUser().getId().equals(user.getId())) {
                 throw new AccessDeniedException("Access denied");
             }
             Path path = createDirectory(username, postId);
             path = Paths.get(path.toString(), file.getOriginalFilename());
             try {
+                if (post.getPhotoLink() != null && Files.exists(Paths.get(post.getPhotoLink()))) {
+                    Files.delete(Paths.get(post.getPhotoLink()));
+                }
                 if (Files.exists(path)) {
                     Files.delete(path);
                 }
@@ -136,9 +149,10 @@ public class PostsService {
     }
 
     @Transactional
+    @Override
     public void deleteFileFromPost(String username, UUID postId) {
         User user = userService.findUserByUsername(username);
-        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+        Post post = findPostById(postId);
         if (!user.getId().equals(post.getUser().getId())) {
             throw new AccessDeniedException("Access Denied");
         }
@@ -154,8 +168,9 @@ public class PostsService {
         }
     }
 
+    @Override
     public HttpEntity<byte[]> getPostFile(UUID postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post not found"));
+        Post post = findPostById(postId);
         byte[] image;
         long size;
         if (post.getPhotoLink() != null) {
@@ -173,5 +188,15 @@ public class PostsService {
         headers.setContentType(MediaType.valueOf(post.getPhotoType()));
         headers.setContentLength(size);
         return new HttpEntity<>(image, headers);
+    }
+
+    @Override
+    public List<ResponsePostDto> getCurrentUserPost(String username) {
+        User user = userService.findUserByUsername(username);
+        return getPostsByUser(user.getId());
+    }
+
+    private Post findPostById(UUID postId) {
+        return postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post not found"));
     }
 }

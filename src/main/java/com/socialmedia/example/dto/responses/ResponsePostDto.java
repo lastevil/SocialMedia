@@ -1,4 +1,4 @@
-package com.socialmedia.example.dto;
+package com.socialmedia.example.dto.responses;
 
 import lombok.Data;
 

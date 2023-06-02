@@ -1,12 +1,10 @@
 package com.socialmedia.example.controllers;
 
-import com.socialmedia.example.dto.RequestPostDto;
-import com.socialmedia.example.dto.ResponsePostDto;
-import com.socialmedia.example.entities.Post;
+import com.socialmedia.example.dto.requests.RequestPostDto;
+import com.socialmedia.example.dto.responses.ResponsePostDto;
 import com.socialmedia.example.exception.validators.TokenUserValidator;
-import com.socialmedia.example.services.PostsService;
+import com.socialmedia.example.services.interfaces.PostServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -22,10 +20,10 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
-@SecurityRequirement(name = "bearerAuth")
+//@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Posts", description = "Контроллер работы с постами")
 public class PostsController {
-    private final PostsService postsService;
+    private final PostServiceImpl postsService;
 
     @Operation(summary = "Создание поста пользователем", description = "Создание поста пользователем")
     @PostMapping("/post/add")
@@ -46,7 +44,7 @@ public class PostsController {
 
     @GetMapping("/post/user/{userId}")
     @Operation(summary = "Список постов пользователя", description = "Получить список постов пользователя по его id")
-    public List<Post> getUserPost(@PathVariable UUID userId) {
+    public List<ResponsePostDto> getUserPost(@PathVariable UUID userId) {
         return postsService.getPostsByUser(userId);
     }
 
@@ -62,6 +60,12 @@ public class PostsController {
         return postsService.getPostFile(postId);
     }
 
+    @GetMapping("/post")
+    @Operation(summary = "Получить посты текущего пользователя" , description = "Метод получения постов для текущего пользователя")
+    public List<ResponsePostDto> getPostCurrentUser(@HeadersSecurityMarker UsernamePasswordAuthenticationToken token){
+        String username = TokenUserValidator.validate(token);
+        return postsService.getCurrentUserPost(username);
+    }
     @PutMapping("/post/{postId}")
     @Operation(summary = "Обновление поста пользователя", description = "Обновить пост пользователя по id")
     public void updatePost(@HeadersSecurityMarker UsernamePasswordAuthenticationToken token,

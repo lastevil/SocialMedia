@@ -3,9 +3,11 @@ package com.socialmedia.example.entities;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.UUIDSerializer;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -39,6 +41,10 @@ public class Post {
 
     @Column(name = "photo_type")
     private String photoType;
+
+    @CreationTimestamp
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     @Override
     public boolean equals(Object o) {

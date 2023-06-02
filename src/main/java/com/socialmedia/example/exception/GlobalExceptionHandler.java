@@ -20,6 +20,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ApplicationError(HttpStatus.BAD_REQUEST.value(), e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(TimeException.class)
+    public ResponseEntity<ApplicationError> catchValidationException(TimeException e) {
+        log.error(e.getMessage(), e);
+        return new ResponseEntity<>(new ApplicationError(HttpStatus.FORBIDDEN.value(), e.getMessage()), HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(AppAuthenticationException.class)
     public ResponseEntity<ApplicationError> catchAppAuthenticationException(AppAuthenticationException e) {
         log.error(e.getMessage(), e);

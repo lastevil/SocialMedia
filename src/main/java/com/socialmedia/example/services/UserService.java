@@ -1,7 +1,8 @@
 package com.socialmedia.example.services;
 
 import com.socialmedia.example.converters.UserConverter;
-import com.socialmedia.example.dto.UserRegDto;
+import com.socialmedia.example.dto.requests.UserRegDto;
+import com.socialmedia.example.dto.responses.UserResponseDto;
 import com.socialmedia.example.entities.Role;
 import com.socialmedia.example.entities.User;
 import com.socialmedia.example.exception.AppAuthenticationException;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,8 +64,17 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    @Transactional
     public User findUserByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> (new ResourceNotFoundException("User Not Found")));
+    }
+
+    public User findUserByUserId(UUID userId) {
+        return userRepository.findById(userId).orElseThrow(() -> (new ResourceNotFoundException("User Not Found")));
+    }
+
+    public List<UserResponseDto> getAllUsers(){
+        return userRepository.findAll().stream()
+                .map(userConverter::fromEntityToRespDto)
+                .collect(Collectors.toList());
     }
 }
