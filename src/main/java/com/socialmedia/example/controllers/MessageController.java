@@ -34,14 +34,21 @@ public class MessageController {
     public void proveMessageText(@HeadersSecurityMarker UsernamePasswordAuthenticationToken token,
                                  @RequestBody RequestMessageDto messageDto) {
         String username = TokenUserValidator.validate(token);
-        messengerService.proveMessageText(username,messageDto);
+        messengerService.proveMessageText(username, messageDto);
     }
 
     @GetMapping("/message/user/{userId}")
     @Operation(summary = "Получить переписку с другом", description = "Метод получения сообщений с другом")
     public List<ResponseDtoMessage> getMessagesFromFriend(@HeadersSecurityMarker UsernamePasswordAuthenticationToken token,
-                                                          @PathVariable UUID userId){
+                                                          @PathVariable UUID userId) {
         String username = TokenUserValidator.validate(token);
-        return messengerService.getMessages(username,userId);
+        return messengerService.getMessages(username, userId);
+    }
+
+    @GetMapping("/message/user")
+    @Operation(summary = "Получить сообщения от себя", description = "Получить сообщения от себя")
+    public List<ResponseDtoMessage> getSelfMessages(@HeadersSecurityMarker UsernamePasswordAuthenticationToken token) {
+        String username = TokenUserValidator.validate(token);
+        return messengerService.getSelfMessages(username);
     }
 }

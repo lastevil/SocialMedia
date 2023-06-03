@@ -13,4 +13,5 @@ public interface MessengerServiceImpl {
     void proveMessageText(String username, RequestMessageDto messageDto);
 
     List<ResponseDtoMessage> getMessages(String username , UUID friend);
+    List<ResponseDtoMessage> getSelfMessages(String username);
 }

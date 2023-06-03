@@ -22,10 +22,10 @@ public class Message {
     Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
-    User senderId;
+    User sender;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id")
-    User receiverId;
+    User receiver;
     @Column(name = "message")
     String messageText;
     @CreationTimestamp

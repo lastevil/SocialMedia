@@ -14,13 +14,11 @@ import org.springframework.security.config.web.servlet.headers.HeadersSecurityMa
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
-//@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Posts", description = "Контроллер работы с постами")
 public class PostsController {
     private final PostServiceImpl postsService;
@@ -42,11 +40,6 @@ public class PostsController {
         postsService.addOrUpdateFile(username, postId, file);
     }
 
-    @GetMapping("/post/user/{userId}")
-    @Operation(summary = "Список постов пользователя", description = "Получить список постов пользователя по его id")
-    public List<ResponsePostDto> getUserPost(@PathVariable UUID userId) {
-        return postsService.getPostsByUser(userId);
-    }
 
     @GetMapping("/post/{postId}")
     @Operation(summary = "Просмотр поста", description = "Получить пост по его id")
@@ -60,12 +53,6 @@ public class PostsController {
         return postsService.getPostFile(postId);
     }
 
-    @GetMapping("/post")
-    @Operation(summary = "Получить посты текущего пользователя" , description = "Метод получения постов для текущего пользователя")
-    public List<ResponsePostDto> getPostCurrentUser(@HeadersSecurityMarker UsernamePasswordAuthenticationToken token){
-        String username = TokenUserValidator.validate(token);
-        return postsService.getCurrentUserPost(username);
-    }
     @PutMapping("/post/{postId}")
     @Operation(summary = "Обновление поста пользователя", description = "Обновить пост пользователя по id")
     public void updatePost(@HeadersSecurityMarker UsernamePasswordAuthenticationToken token,

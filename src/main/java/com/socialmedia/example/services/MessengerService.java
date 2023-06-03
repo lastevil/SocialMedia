@@ -26,16 +26,18 @@ public class MessengerService implements MessengerServiceImpl {
     private final UserService userService;
 
     @Override
+    @Transactional
     public void sendMessage(String username, RequestMessageDto messageDto) {
         MessageValidator.validate(messageDto);
         if (messageDto.getReceiver() != null) {
             Message message = new Message();
             message.setMessageText(messageDto.getMessage());
-            message.setReceiverId(userService.findUserByUserId(messageDto.getReceiver()));
-            message.setSenderId(userService.findUserByUsername(username));
+            message.setReceiver(userService.findUserByUserId(messageDto.getReceiver()));
+            message.setSender(userService.findUserByUsername(username));
             messageRepository.save(message);
         }
     }
+
 
     @Override
     @Transactional
@@ -60,5 +62,12 @@ public class MessengerService implements MessengerServiceImpl {
         return messageList.stream()
                 .map(MessageMapper.INSTANCE::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public List<ResponseDtoMessage> getSelfMessages(String username) {
+        UUID senderId = userService.findUserByUsername(username).getId();
+        return getMessages(username, senderId);
     }
 }

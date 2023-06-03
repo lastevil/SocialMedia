@@ -6,6 +6,7 @@ import com.socialmedia.example.dto.responses.ResponsePostDto;
 import com.socialmedia.example.entities.Post;
 import com.socialmedia.example.entities.User;
 import com.socialmedia.example.exception.AccessDeniedException;
+import com.socialmedia.example.exception.FileException;
 import com.socialmedia.example.exception.ResourceNotFoundException;
 import com.socialmedia.example.exception.validators.PostValidator;
 import com.socialmedia.example.repositorys.PostRepository;
@@ -24,9 +25,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -48,12 +47,6 @@ public class PostsService implements PostServiceImpl {
         return post.getId();
     }
 
-    @Override
-    public List<ResponsePostDto> getPostsByUser(UUID userId) {
-        return postRepository.findAllByUserId(userId).stream()
-                .map(PostMapper.INSTANCE::fromEntityToResp)
-                .collect(Collectors.toList());
-    }
 
     @Override
     public ResponsePostDto getPostById(UUID postId) {
@@ -65,9 +58,7 @@ public class PostsService implements PostServiceImpl {
     public void updatePost(String username, UUID postId, RequestPostDto requestPostDto) {
         User user = userService.findUserByUsername(username);
         Post post = findPostById(postId);
-        if (!user.getId().equals(post.getUser().getId())) {
-            throw new AccessDeniedException("Access Denied");
-        }
+        PostValidator.accessValidate(user.getId(),post.getUser().getId());
         if (!requestPostDto.getHeader().isBlank()) {
             post.setHeader(requestPostDto.getHeader());
         }
@@ -82,9 +73,7 @@ public class PostsService implements PostServiceImpl {
     public void deletePost(String username, UUID postId) {
         User user = userService.findUserByUsername(username);
         Post post = findPostById(postId);
-        if (!user.getId().equals(post.getUser().getId())) {
-            throw new AccessDeniedException("Access Denied");
-        }
+        PostValidator.accessValidate(user.getId(),post.getUser().getId());
         if (post.getPhotoLink() != null) {
             try {
                 Files.deleteIfExists(Paths.get(post.getPhotoLink()));
@@ -122,13 +111,11 @@ public class PostsService implements PostServiceImpl {
         if (file != null) {
             User user = userService.findUserByUsername(username);
             String contentType = file.getContentType();
-            if (!contentType.contains("image/")) {
+            if (contentType!=null && !contentType.contains("image/")) {
                 throw new AccessDeniedException("Invalid file type");
             }
             Post post = findPostById(postId);
-            if (!post.getUser().getId().equals(user.getId())) {
-                throw new AccessDeniedException("Access denied");
-            }
+            PostValidator.accessValidate(user.getId(),post.getUser().getId());
             Path path = createDirectory(username, postId);
             path = Paths.get(path.toString(), file.getOriginalFilename());
             try {
@@ -139,8 +126,8 @@ public class PostsService implements PostServiceImpl {
                     Files.delete(path);
                 }
                 Files.write(path, file.getBytes());
-            } catch (Exception e) {
-                throw new RuntimeException(e.getMessage());
+            } catch (IOException e) {
+                throw new FileException("File or directory not found");
             }
             post.setPhotoLink(path.toString());
             post.setPhotoType(file.getContentType());
@@ -153,14 +140,12 @@ public class PostsService implements PostServiceImpl {
     public void deleteFileFromPost(String username, UUID postId) {
         User user = userService.findUserByUsername(username);
         Post post = findPostById(postId);
-        if (!user.getId().equals(post.getUser().getId())) {
-            throw new AccessDeniedException("Access Denied");
-        }
+        PostValidator.accessValidate(user.getId(),post.getUser().getId());
         if (post.getPhotoLink() != null) {
             try {
                 Files.deleteIfExists(Paths.get(post.getPhotoLink()));
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new FileException("File or directory not found");
             }
             post.setPhotoLink(null);
             post.setPhotoType(null);
@@ -190,11 +175,6 @@ public class PostsService implements PostServiceImpl {
         return new HttpEntity<>(image, headers);
     }
 
-    @Override
-    public List<ResponsePostDto> getCurrentUserPost(String username) {
-        User user = userService.findUserByUsername(username);
-        return getPostsByUser(user.getId());
-    }
 
     private Post findPostById(UUID postId) {
         return postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post not found"));

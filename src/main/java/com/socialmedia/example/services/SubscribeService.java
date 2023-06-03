@@ -42,7 +42,7 @@ public class SubscribeService implements SubscribeServiceImpl {
         } else {
             messengerService.sendMessage(username, RequestMessageDto.builder()
                     .message("Запрос на дружбу от:" + username)
-                    .receiver(userId)
+                    .receiver(ownUser.getId())
                     .build());
         }
     }
@@ -68,12 +68,12 @@ public class SubscribeService implements SubscribeServiceImpl {
         subscriber.setFriends(true);
         subscribeRepository.save(subscriber);
         messengerService.sendMessage(reciverUser.getUsername(), RequestMessageDto.builder()
-                .message("Поздравляю, мы стали друзьями!")
-                .receiver(ownUser.getId())
+                .message("Поздравляю, вы стали друзьями с :" + username + "!")
+                .receiver(reciverUser.getId())
                 .build());
         messengerService.sendMessage(username, RequestMessageDto.builder()
-                .message("Поздравляю, мы стали друзьями!")
-                .receiver(userId)
+                .message("Поздравляю, вы стали друзьями с :" + reciverUser.getUsername() + "!")
+                .receiver(ownUser.getId())
                 .build());
     }
 

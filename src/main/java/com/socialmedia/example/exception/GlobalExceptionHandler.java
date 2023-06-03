@@ -26,6 +26,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ApplicationError(HttpStatus.FORBIDDEN.value(), e.getMessage()), HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(FileException.class)
+    public ResponseEntity<ApplicationError> catchFileException(FileException e){
+        log.error(e.getMessage(),e);
+        return new ResponseEntity<>(new ApplicationError(HttpStatus.FORBIDDEN.value(), e.getMessage()), HttpStatus.FORBIDDEN);
+    }
     @ExceptionHandler(AppAuthenticationException.class)
     public ResponseEntity<ApplicationError> catchAppAuthenticationException(AppAuthenticationException e) {
         log.error(e.getMessage(), e);
