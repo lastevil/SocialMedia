@@ -2,7 +2,6 @@ package com.socialmedia.example.services;
 
 import com.socialmedia.example.converters.PostMapper;
 import com.socialmedia.example.dto.responses.ResponsePostDto;
-import com.socialmedia.example.entities.User;
 import com.socialmedia.example.repositorys.PostRepository;
 import com.socialmedia.example.services.interfaces.FeedServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +32,8 @@ public class FeedService implements FeedServiceImpl {
         } else {
             sortedByName = PageRequest.of(page - 1, size, Sort.by("createdAt").descending());
         }
-        User user = userService.findUserByUsername(username);
-        return postRepository.findByUserId(user.getId(), sortedByName)
+        UUID uuid = userService.findUserByUsername(username).getId();
+        return postRepository.findByUserId(uuid, sortedByName)
                 .map(PostMapper.INSTANCE::fromEntityToResp);
     }
 
@@ -47,7 +46,7 @@ public class FeedService implements FeedServiceImpl {
 
     @Override
     public List<ResponsePostDto> getCurrentUserPost(String username) {
-        User user = userService.findUserByUsername(username);
-        return getPostsByUser(user.getId());
+        UUID uuid = userService.findUserByUsername(username).getId();
+        return getPostsByUser(uuid);
     }
 }

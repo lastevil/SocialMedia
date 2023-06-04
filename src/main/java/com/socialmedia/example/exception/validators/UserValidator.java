@@ -35,7 +35,7 @@ public class UserValidator {
             errors.add("Password must not be empty");
         if (userRegDto.getEmail() == null || userRegDto.getEmail().isBlank())
             errors.add("Email must not be empty");
-        if (!emailValidate(userRegDto.getEmail()))
+        else if (!emailValidate(userRegDto.getEmail()))
             errors.add("Email is not valid");
         if (!errors.isEmpty()) throw new ValidationException(errors);
     }

@@ -101,7 +101,7 @@ public class SubscribeService implements SubscribeServiceImpl {
     }
 
     @Override
-    public List<UserResponseDto> getFrendsList(String username) {
+    public List<UserResponseDto> getFriendsList(String username) {
         User sender = userService.findUserByUsername(username);
         List<Subscriber> subscribers = subscribeRepository.findBySender_IdAndIsFriends(sender.getId(), true);
         return subscribers.stream()

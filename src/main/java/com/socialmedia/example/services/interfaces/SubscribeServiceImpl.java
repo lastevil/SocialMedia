@@ -15,5 +15,5 @@ public interface SubscribeServiceImpl {
     void unsubscribe(String username, UUID userId);
 
 
-    List<UserResponseDto> getFrendsList(String username);
+    List<UserResponseDto> getFriendsList(String username);
 }

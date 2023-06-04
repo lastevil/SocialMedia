@@ -11,7 +11,9 @@ import org.springframework.util.unit.DataSize;
 import javax.servlet.MultipartConfigElement;
 
 @Configuration
-@PropertySource("secrets.properties")
+@PropertySource("classpath:/application.yaml")
+@PropertySource("classpath:/secrets.properties")
+
 public class AppConfig {
     @Bean
     protected PasswordEncoder passwordEncoder() {

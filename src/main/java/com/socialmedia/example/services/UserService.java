@@ -8,6 +8,7 @@ import com.socialmedia.example.entities.User;
 import com.socialmedia.example.exception.AppAuthenticationException;
 import com.socialmedia.example.exception.ResourceExistsException;
 import com.socialmedia.example.exception.ResourceNotFoundException;
+import com.socialmedia.example.exception.ValidationException;
 import com.socialmedia.example.exception.validators.UserValidator;
 import com.socialmedia.example.repositorys.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +56,9 @@ public class UserService implements UserDetailsService {
     public void tryNewUserAdd(UserRegDto newUser) {
         validator.validate(newUser);
         if (Boolean.TRUE.equals(userRepository.existsUserByUsername(newUser.getUsername())))
-            throw new ResourceExistsException("This user already exists");
+            throw new ResourceExistsException("This username is busy");
+        if (Boolean.TRUE.equals(userRepository.existsByEmail(newUser.getEmail())))
+            throw new ResourceExistsException("This email is busy on another account");
         User user = userConverter.fromRegDto(newUser);
         Role roleUser = roleService.findRoleByName("ROLE_USER");
         List<Role> userRoles = new ArrayList<>();
@@ -69,6 +72,11 @@ public class UserService implements UserDetailsService {
     }
 
     public User findUserByUserId(UUID userId) {
+        if (userId==null){
+            List<String> ex = new ArrayList<>();
+            ex.add("Wrong user id");
+            throw new ValidationException(ex);
+        }
         return userRepository.findById(userId).orElseThrow(() -> (new ResourceNotFoundException("User Not Found")));
     }
 

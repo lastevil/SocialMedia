@@ -24,7 +24,7 @@ public class SubscribeController {
     @Operation(summary = "Список друзей пользователя", description = "Получить список друзей текущего пользователя")
     public List<UserResponseDto> getFriends(@HeadersSecurityMarker UsernamePasswordAuthenticationToken token) {
         String username = TokenUserValidator.validate(token);
-        return subscribeService.getFrendsList(username);
+        return subscribeService.getFriendsList(username);
     }
 
     @PostMapping("/subscribe/{userId}")

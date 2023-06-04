@@ -15,6 +15,7 @@ public class MessageValidator {
 
         if (messageDto == null) {
             errors.add("Missing message");
+            throw new ValidationException(errors);
         }
         if (messageDto.getMessage()==null || messageDto.getMessage().isBlank()){
             errors.add("Message is empty");

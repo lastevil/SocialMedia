@@ -14,7 +14,10 @@ public class PostValidator {
 
     public static void requestDtoValidate(RequestPostDto requestPostDto){
         List<String> errors = new ArrayList<>();
-        if (requestPostDto.getHeader() == null || requestPostDto.getHeader().isBlank())
+        if(requestPostDto==null){
+            errors.add("Wrong request data");
+        }
+        else if (requestPostDto.getHeader() == null || requestPostDto.getHeader().isBlank())
             errors.add("Header must be not empty");
         if (!errors.isEmpty()) throw new ValidationException(errors);
     }

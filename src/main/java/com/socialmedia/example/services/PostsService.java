@@ -43,8 +43,8 @@ public class PostsService implements PostServiceImpl {
                 .body(requestPostDto.getBody())
                 .user(userService.findUserByUsername(username))
                 .build();
-        postRepository.save(post);
-        return post.getId();
+
+        return postRepository.save(post).getId();
     }
 
 
@@ -84,18 +84,17 @@ public class PostsService implements PostServiceImpl {
         postRepository.deleteById(postId);
     }
 
-    private Path createDirectory(String username, UUID postid) {
+    private Path createDirectory(String username, UUID postId) {
         Path root = Paths.get("images");
         try {
             if (!Files.exists(root)) {
-
                 Files.createDirectories(root);
             }
             root = Paths.get(root.toString(), username);
             if (!Files.exists(root)) {
                 Files.createDirectories(root);
             }
-            root = Paths.get(root.toString(), postid.toString());
+            root = Paths.get(root.toString(), postId.toString());
             if (!Files.exists(root)) {
                 Files.createDirectories(root);
             }
