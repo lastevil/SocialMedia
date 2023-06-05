@@ -29,8 +29,10 @@ $ docker-compose up
 перейти в документацию по ссылке http://localhost:8080/socialAPI/swagger-ui/index.html
 
 <h3>Важно:</h3>
-Перед запускои изменить секретный ключ в 
-``` src/resources/secrets.properties```
 
-Схема базы данных:
+Перед запускои изменить секретный ключ в ```src/resources/secrets.properties``` 
+
+<hr/>
+
+Схема базы данных: <br/>
 ![screenshot](/description/DB_Scheme.jpg)
