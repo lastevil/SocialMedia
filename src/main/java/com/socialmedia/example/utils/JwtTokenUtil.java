@@ -44,9 +44,6 @@ public class JwtTokenUtil {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    public List<String> getRoles(String token) {
-        return getClaimFromToken(token, (Function<Claims, List<String>>) claims -> claims.get("roles", List.class));
-    }
 
     private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         Claims claims = getAllClaimsFromToken(token);

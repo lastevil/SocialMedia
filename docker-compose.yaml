@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: postgres_container
+    domainname: socialAPI
+    image: postgres:15.3
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "1"
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  social_api:
+    container_name: api
+    domainname: socialAPI
+    build:
+      dockerfile: dockerfile
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    links:
+      - postgres
+    depends_on:
+      - postgres
