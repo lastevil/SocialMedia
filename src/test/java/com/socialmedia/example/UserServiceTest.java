@@ -1,7 +1,7 @@
 package com.socialmedia.example;
 
 import com.socialmedia.example.configs.AppConfig;
-import com.socialmedia.example.converters.UserConverter;
+import com.socialmedia.example.converters.UserMapper;
 import com.socialmedia.example.dto.requests.UserRegDto;
 import com.socialmedia.example.dto.responses.UserResponseDto;
 import com.socialmedia.example.entities.Role;
@@ -32,13 +32,13 @@ import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {UserService.class, UserConverter.class, UserValidator.class, AppConfig.class})
+@SpringBootTest(classes = {UserService.class, UserMapper.class, UserValidator.class, AppConfig.class})
 class UserServiceTest {
 
     @Autowired
     private UserService userService;
     @Autowired
-    private UserConverter converter;
+    private UserMapper converter;
 
     @MockBean
     private UserRepository userRepository;

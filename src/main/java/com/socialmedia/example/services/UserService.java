@@ -1,6 +1,6 @@
 package com.socialmedia.example.services;
 
-import com.socialmedia.example.converters.UserConverter;
+import com.socialmedia.example.converters.UserMapper;
 import com.socialmedia.example.dto.requests.UserRegDto;
 import com.socialmedia.example.dto.responses.UserResponseDto;
 import com.socialmedia.example.entities.Role;
@@ -30,8 +30,8 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final RoleService roleService;
-    private final UserConverter userConverter;
     private final UserValidator validator;
+    private final UserMapper userConverter;
 
     @Transactional
     public UserDetails loadUserByUsername(String login) {

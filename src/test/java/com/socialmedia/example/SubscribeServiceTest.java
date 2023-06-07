@@ -1,7 +1,7 @@
 package com.socialmedia.example;
 
 import com.socialmedia.example.configs.AppConfig;
-import com.socialmedia.example.converters.UserConverter;
+import com.socialmedia.example.converters.UserMapper;
 import com.socialmedia.example.dto.responses.UserResponseDto;
 import com.socialmedia.example.entities.Subscriber;
 import com.socialmedia.example.entities.User;
@@ -22,13 +22,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@SpringBootTest(classes = {SubscribeService.class, UserConverter.class, AppConfig.class})
+@SpringBootTest(classes = {SubscribeService.class, UserMapper.class, AppConfig.class})
 class SubscribeServiceTest {
 
     @Autowired
     private SubscribeService service;
     @Autowired
-    private UserConverter userConverter;
+    private UserMapper userConverter;
 
     @MockBean
     private UserService userService;

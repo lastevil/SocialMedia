@@ -1,6 +1,6 @@
 package com.socialmedia.example.services;
 
-import com.socialmedia.example.converters.UserConverter;
+import com.socialmedia.example.converters.UserMapper;
 import com.socialmedia.example.dto.requests.RequestMessageDto;
 import com.socialmedia.example.dto.responses.UserResponseDto;
 import com.socialmedia.example.entities.Subscriber;
@@ -23,7 +23,7 @@ public class SubscribeService implements SubscribeServiceImpl {
     private final UserService userService;
     private final SubscribeRepository subscribeRepository;
     private final MessengerServiceImpl messengerService;
-    private final UserConverter userConverter;
+    private final UserMapper userConverter;
 
     @Override
     @Transactional
