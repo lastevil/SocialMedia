@@ -11,11 +11,11 @@ import com.socialmedia.example.exception.ResourceNotFoundException;
 import com.socialmedia.example.exception.ValidationException;
 import com.socialmedia.example.exception.validators.UserValidator;
 import com.socialmedia.example.repositorys.UserRepository;
+import com.socialmedia.example.services.interfaces.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserService implements UserServiceImpl {
 
     private final UserRepository userRepository;
     private final RoleService roleService;
@@ -34,6 +34,7 @@ public class UserService implements UserDetailsService {
     private final UserMapper userConverter;
 
     @Transactional
+    @Override
     public UserDetails loadUserByUsername(String login) {
         User user;
         if (validator.emailValidate(login)) {
@@ -53,6 +54,8 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
+
+    @Override
     public void tryNewUserAdd(UserRegDto newUser) {
         validator.validate(newUser);
         if (Boolean.TRUE.equals(userRepository.existsUserByUsername(newUser.getUsername())))
@@ -67,12 +70,14 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    @Override
     public User findUserByUsername(String username) {
         return userRepository.findByUsername(username).orElseThrow(() -> (new ResourceNotFoundException("User Not Found")));
     }
 
+    @Override
     public User findUserByUserId(UUID userId) {
-        if (userId==null){
+        if (userId == null) {
             List<String> ex = new ArrayList<>();
             ex.add("Wrong user id");
             throw new ValidationException(ex);
@@ -80,7 +85,8 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(userId).orElseThrow(() -> (new ResourceNotFoundException("User Not Found")));
     }
 
-    public List<UserResponseDto> getAllUsers(){
+    @Override
+    public List<UserResponseDto> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(userConverter::fromEntityToRespDto)
                 .collect(Collectors.toList());
