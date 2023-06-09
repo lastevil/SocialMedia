@@ -11,6 +11,7 @@ import com.socialmedia.example.exception.ResourceNotFoundException;
 import com.socialmedia.example.exception.validators.PostValidator;
 import com.socialmedia.example.repositorys.PostRepository;
 import com.socialmedia.example.services.interfaces.PostServiceImpl;
+import com.socialmedia.example.services.interfaces.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -31,7 +32,7 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 public class PostsService implements PostServiceImpl {
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final PostRepository postRepository;
 
     @Transactional

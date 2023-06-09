@@ -1,6 +1,6 @@
 package com.socialmedia.example.services;
 
-import com.socialmedia.example.converters.UserConverter;
+import com.socialmedia.example.converters.UserMapper;
 import com.socialmedia.example.dto.requests.RequestMessageDto;
 import com.socialmedia.example.dto.responses.UserResponseDto;
 import com.socialmedia.example.entities.Subscriber;
@@ -9,6 +9,7 @@ import com.socialmedia.example.exception.ResourceNotFoundException;
 import com.socialmedia.example.repositorys.SubscribeRepository;
 import com.socialmedia.example.services.interfaces.MessengerServiceImpl;
 import com.socialmedia.example.services.interfaces.SubscribeServiceImpl;
+import com.socialmedia.example.services.interfaces.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,10 +21,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class SubscribeService implements SubscribeServiceImpl {
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final SubscribeRepository subscribeRepository;
     private final MessengerServiceImpl messengerService;
-    private final UserConverter userConverter;
+    private final UserMapper userConverter;
 
     @Override
     @Transactional

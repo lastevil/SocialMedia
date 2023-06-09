@@ -4,6 +4,7 @@ import com.socialmedia.example.converters.PostMapper;
 import com.socialmedia.example.dto.responses.ResponsePostDto;
 import com.socialmedia.example.repositorys.PostRepository;
 import com.socialmedia.example.services.interfaces.FeedServiceImpl;
+import com.socialmedia.example.services.interfaces.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FeedService implements FeedServiceImpl {
     private final PostRepository postRepository;
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @Override
     public Page<ResponsePostDto> getFeed(String username, int page, int size, boolean timeUp) {

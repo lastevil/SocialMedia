@@ -9,6 +9,7 @@ import com.socialmedia.example.exception.TimeException;
 import com.socialmedia.example.exception.validators.MessageValidator;
 import com.socialmedia.example.repositorys.MessageRepository;
 import com.socialmedia.example.services.interfaces.MessengerServiceImpl;
+import com.socialmedia.example.services.interfaces.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 public class MessengerService implements MessengerServiceImpl {
 
     private final MessageRepository messageRepository;
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @Override
     @Transactional
