@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +32,7 @@ public class UserService implements UserServiceImpl {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final UserValidator validator;
-    private final UserMapper userConverter;
+    private final PasswordEncoder encoder;
 
     @Transactional
     @Override
@@ -62,7 +63,7 @@ public class UserService implements UserServiceImpl {
             throw new ResourceExistsException("This username is busy");
         if (Boolean.TRUE.equals(userRepository.existsByEmail(newUser.getEmail())))
             throw new ResourceExistsException("This email is busy on another account");
-        User user = userConverter.fromRegDto(newUser);
+        User user = UserMapper.INSTANCE.fromRegDto(newUser, encoder);
         Role roleUser = roleService.findRoleByName("ROLE_USER");
         List<Role> userRoles = new ArrayList<>();
         userRoles.add(roleUser);
@@ -88,7 +89,7 @@ public class UserService implements UserServiceImpl {
     @Override
     public List<UserResponseDto> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(userConverter::fromEntityToRespDto)
+                .map(UserMapper.INSTANCE::fromEntityToRespDto)
                 .collect(Collectors.toList());
     }
 }

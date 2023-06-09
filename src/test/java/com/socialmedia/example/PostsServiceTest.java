@@ -10,6 +10,7 @@ import com.socialmedia.example.exception.ValidationException;
 import com.socialmedia.example.repositorys.PostRepository;
 import com.socialmedia.example.services.PostsService;
 import com.socialmedia.example.services.UserService;
+import com.socialmedia.example.services.interfaces.UserServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -29,7 +30,7 @@ class PostsServiceTest {
     @Autowired
     private PostsService postsService;
     @MockBean
-    private UserService userService;
+    private UserServiceImpl userService;
     @MockBean
     private PostRepository postRepository;
 

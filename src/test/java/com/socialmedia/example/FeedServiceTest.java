@@ -7,6 +7,8 @@ import com.socialmedia.example.entities.User;
 import com.socialmedia.example.repositorys.PostRepository;
 import com.socialmedia.example.services.FeedService;
 import com.socialmedia.example.services.UserService;
+import com.socialmedia.example.services.interfaces.FeedServiceImpl;
+import com.socialmedia.example.services.interfaces.UserServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,11 +27,11 @@ import java.util.stream.Collectors;
 @SpringBootTest(classes = {FeedService.class})
 class FeedServiceTest {
     @Autowired
-    private FeedService feedService;
+    private FeedServiceImpl feedService;
     @MockBean
     private PostRepository postRepository;
     @MockBean
-    private UserService userService;
+    private UserServiceImpl userService;
 
     Post post1, post2, post3;
     UUID id1, id2, id3;
@@ -37,6 +39,7 @@ class FeedServiceTest {
 
     @BeforeEach
     void initBefore() {
+
         id1 = UUID.randomUUID();
         id2 = UUID.randomUUID();
         id3 = UUID.randomUUID();

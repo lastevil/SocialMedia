@@ -11,6 +11,7 @@ import com.socialmedia.example.exception.ValidationException;
 import com.socialmedia.example.repositorys.MessageRepository;
 import com.socialmedia.example.services.MessengerService;
 import com.socialmedia.example.services.UserService;
+import com.socialmedia.example.services.interfaces.UserServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ class MessengerServiceTest {
     @MockBean
     private MessageRepository messageRepository;
     @MockBean
-    private UserService userService;
+    private UserServiceImpl userService;
 
     private UUID id1;
     private UUID id2;
