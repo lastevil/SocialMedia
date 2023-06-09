@@ -24,7 +24,6 @@ public class SubscribeService implements SubscribeServiceImpl {
     private final UserServiceImpl userService;
     private final SubscribeRepository subscribeRepository;
     private final MessengerServiceImpl messengerService;
-    private final UserMapper userConverter;
 
     @Override
     @Transactional
@@ -106,7 +105,7 @@ public class SubscribeService implements SubscribeServiceImpl {
         User sender = userService.findUserByUsername(username);
         List<Subscriber> subscribers = subscribeRepository.findBySender_IdAndIsFriends(sender.getId(), true);
         return subscribers.stream()
-                .map(s -> userConverter.fromEntityToRespDto(s.getReceiver()))
+                .map(s -> UserMapper.INSTANCE.fromEntityToRespDto(s.getReceiver()))
                 .collect(Collectors.toList());
     }
 

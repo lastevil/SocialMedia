@@ -9,6 +9,8 @@ import com.socialmedia.example.repositorys.SubscribeRepository;
 import com.socialmedia.example.services.MessengerService;
 import com.socialmedia.example.services.SubscribeService;
 import com.socialmedia.example.services.UserService;
+import com.socialmedia.example.services.interfaces.SubscribeServiceImpl;
+import com.socialmedia.example.services.interfaces.UserServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -26,12 +28,10 @@ import java.util.stream.Collectors;
 class SubscribeServiceTest {
 
     @Autowired
-    private SubscribeService service;
-    @Autowired
-    private UserMapper userConverter;
+    private SubscribeServiceImpl service;
 
     @MockBean
-    private UserService userService;
+    private UserServiceImpl userService;
     @MockBean
     private SubscribeRepository subscribeRepository;
     @MockBean
@@ -66,7 +66,7 @@ class SubscribeServiceTest {
         users.add(user2);
         users.add(user3);
         List<UserResponseDto> expectedList = users.stream()
-                .map(userConverter::fromEntityToRespDto)
+                .map(UserMapper.INSTANCE::fromEntityToRespDto)
                 .collect(Collectors.toList());
 
         Assertions.assertEquals(expectedList,responseList);

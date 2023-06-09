@@ -14,14 +14,18 @@ import com.socialmedia.example.exception.validators.UserValidator;
 import com.socialmedia.example.repositorys.UserRepository;
 import com.socialmedia.example.services.RoleService;
 import com.socialmedia.example.services.UserService;
+import com.socialmedia.example.services.interfaces.UserServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,13 +36,11 @@ import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {UserService.class, UserMapper.class, UserValidator.class, AppConfig.class})
+@SpringBootTest(classes = {UserService.class, UserMapper.class, PasswordEncoder.class, UserValidator.class, AppConfig.class})
 class UserServiceTest {
 
     @Autowired
-    private UserService userService;
-    @Autowired
-    private UserMapper converter;
+    private UserServiceImpl userService;
 
     @MockBean
     private UserRepository userRepository;
@@ -52,7 +54,7 @@ class UserServiceTest {
 
     @BeforeEach
     public void initEach() {
-        id =UUID.randomUUID();
+        id = UUID.randomUUID();
         Role roleUser = new Role();
         roleUser.setId(1L);
         roleUser.setName("ROLE_USER");
@@ -154,7 +156,7 @@ class UserServiceTest {
     }
 
     @Test
-    void findUserByUserIdTest(){
+    void findUserByUserIdTest() {
         UUID randId = UUID.randomUUID();
         Mockito.doReturn(testUser1).when(userRepository).findById(id);
         Mockito.doReturn(testUser2).when(userRepository).findById(randId);
@@ -172,7 +174,7 @@ class UserServiceTest {
     }
 
     @Test
-    void getAllUsersTest(){
+    void getAllUsersTest() {
         Role roleTestUser = roleService.findRoleByName("ROLE_USER");
         List<Role> userRoles = new ArrayList<>();
         userRoles.add(roleTestUser);
@@ -192,11 +194,11 @@ class UserServiceTest {
         Mockito.doReturn(userList).when(userRepository).findAll();
 
         List<UserResponseDto> responseDtoList = userService.getAllUsers();
-        List<UserResponseDto> responseDtoList2 = userList.stream().map(converter::fromEntityToRespDto).collect(Collectors.toList());
+        List<UserResponseDto> responseDtoList2 = userList.stream().map(user->UserMapper.INSTANCE.fromEntityToRespDto(user)).collect(Collectors.toList());
 
         Assertions.assertEquals(2, responseDtoList.size());
         Assertions.assertEquals(responseDtoList.get(0).getClass(), UserResponseDto.class);
-        Assertions.assertEquals(responseDtoList,responseDtoList2);
+        Assertions.assertEquals(responseDtoList, responseDtoList2);
 
     }
 }
